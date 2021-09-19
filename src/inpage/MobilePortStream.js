@@ -37,7 +37,12 @@ MobilePortStream.prototype._onMessage = function (event) {
   console.log("MobilePortStream.prototype._onMessage");
   console.log(event);
 
-  const msg = event.data;
+  let msg = event.data;
+  try {
+    msg = JSON.parse(event.data);
+  } catch (error) {
+    console.log("MobilePortStream JSON.parse error");
+  }
   console.log(msg);
   console.log(this._origin);
   console.log(this._name);
