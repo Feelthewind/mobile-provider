@@ -34,30 +34,33 @@ function MobilePortStream(port) {
  */
 MobilePortStream.prototype._onMessage = function (event) {
   // eslint-disable-next-line no-alert
-  console.warn("MobilePortStream.prototype._onMessage");
-  console.warn(event);
-  console.warn(this._origin);
-  console.warn(this._name);
+  console.log("MobilePortStream.prototype._onMessage");
+  console.log(event);
 
   const msg = event.data;
+  console.log(msg);
+  console.log(this._origin);
+  console.log(this._name);
 
   // validate message
-  if (this._origin !== "*" && event.origin !== this._origin) {
-    return;
-  }
+  // if (this._origin !== "*" && event.origin !== this._origin) {
+  //   return;
+  // }
   if (!msg || typeof msg !== "object") {
     return;
   }
   if (!msg.data || typeof msg.data !== "object") {
     return;
   }
-  // if (msg.target && msg.target !== this._name) {
-  //   return;
-  // }
+  if (msg.target && msg.target !== this._name) {
+    return;
+  }
   // Filter outgoing messages
   // if (msg.data.data && msg.data.data.toNative) {
   //   return;
   // }
+
+  console.log("MobilePortStream _onMessage push");
 
   if (Buffer.isBuffer(msg)) {
     delete msg._isBuffer;
@@ -99,28 +102,30 @@ MobilePortStream.prototype._write = function (msg, _encoding, cb) {
   console.warn(msg);
   try {
     const iframe = document.querySelector("iframe");
-    iframe.contentWindow.postMessage(
-      JSON.stringify({
-        name: "name test",
-        data: "data test",
-        origin: window.location.href,
-      }),
-      "*"
-    );
-    // if (Buffer.isBuffer(msg)) {
-    //   const data = msg.toJSON();
-    //   data._isBuffer = true;
-    //   iframe.contentWindow.postMessage(
-    //     JSON.stringify({ ...data, origin: window.location.href }),
-    //   );
-    // } else {
-    //   if (msg.data) {
-    //     msg.data.toNative = true;
-    //   }
-    //   iframe.contentWindow.postMessage(
-    //     JSON.stringify({ ...msg, origin: window.location.href }),
-    //   );
-    // }
+    // iframe.contentWindow.postMessage(
+    //   JSON.stringify({
+    //     name: "name test",
+    //     data: "data test",
+    //     origin: window.location.href,
+    //   }),
+    //   "*"
+    // );
+    if (Buffer.isBuffer(msg)) {
+      const data = msg.toJSON();
+      data._isBuffer = true;
+      iframe.contentWindow.postMessage(
+        JSON.stringify({ ...data, origin: window.location.href }),
+        "http://localhost:8080"
+      );
+    } else {
+      // if (msg.data) {
+      //   msg.data.toNative = true;
+      // }
+      iframe.contentWindow.postMessage(
+        JSON.stringify({ ...msg, origin: window.location.href }),
+        "http://localhost:8080"
+      );
+    }
     console.log("after window.postMessage");
   } catch (err) {
     console.warn(err);
