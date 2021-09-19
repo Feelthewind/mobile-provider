@@ -1,6 +1,6 @@
 {
-  "name": "@metamask/mobile-provider",
-  "version": "2.1.0",
+  "name": "dekey-mobile-provider",
+  "version": "0.0.33",
   "main": "dist/index.js",
   "engines": {
     "node": ">=12.0.0"

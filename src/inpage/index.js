@@ -8,17 +8,23 @@ const INPAGE = 'metamask-inpage';
 const CONTENT_SCRIPT = 'metamask-contentscript';
 const PROVIDER = 'metamask-provider';
 
+console.log('inpage start');
+
 // Setup stream for content script communication
 const metamaskStream = new ReactNativePostMessageStream({
   name: INPAGE,
   target: CONTENT_SCRIPT,
 });
 
+console.log('after metamaskStream');
+console.log(metamaskStream);
+
 // Initialize provider object (window.ethereum)
 initializeProvider({
   connectionStream: metamaskStream,
   shouldSendMetadata: false,
 });
+console.log('after initializeProvider');
 
 // Set content script post-setup function
 Object.defineProperty(window, '_metamaskSetupProvider', {
@@ -37,6 +43,9 @@ Object.defineProperty(window, '_metamaskSetupProvider', {
  * Setup function called from content script after the DOM is ready.
  */
 function setupProviderStreams() {
+  // eslint-disable-next-line no-alert
+  alert('mobile-provider setupProviderStreams');
+  console.log('mobile-provider setupProviderStreams');
   // the transport-specific streams for communication between inpage and background
   const pageStream = new ReactNativePostMessageStream({
     name: CONTENT_SCRIPT,
@@ -58,6 +67,7 @@ function setupProviderStreams() {
     logStreamDisconnectWarning('MetaMask Inpage Multiplex', err),
   );
   pump(appMux, appStream, appMux, (err) => {
+    console.warn(err);
     logStreamDisconnectWarning('MetaMask Background Multiplex', err);
     notifyProviderOfStreamFailure();
   });
@@ -77,6 +87,7 @@ function setupProviderStreams() {
  * @param {ObjectMultiplex} muxB - The second mux.
  */
 function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
+  console.log('forwardTrafficBetweenMuxes');
   const channelA = muxA.createStream(channelName);
   const channelB = muxB.createStream(channelName);
   pump(channelA, channelB, channelA, (err) =>
@@ -99,6 +110,7 @@ function logStreamDisconnectWarning(remoteLabel, err) {
     warningMsg += `\n${err.stack}`;
   }
   console.warn(warningMsg);
+  console.warn(err);
   console.error(err);
 }
 

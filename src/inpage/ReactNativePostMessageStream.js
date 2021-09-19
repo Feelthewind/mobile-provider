@@ -8,6 +8,7 @@ module.exports = PostMessageStream;
 inherits(PostMessageStream, Duplex);
 
 function PostMessageStream(opts) {
+  console.log('PostMessageStream');
   Duplex.call(this, {
     objectMode: true,
   });
@@ -25,10 +26,13 @@ function PostMessageStream(opts) {
   // send syncorization message
   this._write('SYN', null, noop);
   this.cork();
+  console.log('End PostMessageStream');
 }
 
 // private
 PostMessageStream.prototype._onMessage = function (event) {
+  console.log('ReactNativePostMessageStream onMessage');
+  console.log(event);
   const msg = event.data;
 
   // validate message
