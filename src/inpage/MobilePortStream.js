@@ -120,7 +120,7 @@ MobilePortStream.prototype._write = function (msg, _encoding, cb) {
       data._isBuffer = true;
       iframe.contentWindow.postMessage(
         JSON.stringify({ ...data, origin: window.location.href }),
-        "http://localhost:8080"
+        "*"
       );
     } else {
       // if (msg.data) {
@@ -128,7 +128,7 @@ MobilePortStream.prototype._write = function (msg, _encoding, cb) {
       // }
       iframe.contentWindow.postMessage(
         JSON.stringify({ ...msg, origin: window.location.href }),
-        "http://localhost:8080"
+        "*"
       );
     }
     console.log("after window.postMessage");
