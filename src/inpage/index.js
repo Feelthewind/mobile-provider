@@ -1,14 +1,14 @@
-const { initializeProvider, shimWeb3 } = require('@metamask/inpage-provider');
-const ObjectMultiplex = require('@metamask/object-multiplex');
-const pump = require('pump');
-const MobilePortStream = require('./MobilePortStream');
-const ReactNativePostMessageStream = require('./ReactNativePostMessageStream');
+const { initializeProvider, shimWeb3 } = require("@metamask/inpage-provider");
+const ObjectMultiplex = require("@metamask/object-multiplex");
+const pump = require("pump");
+const MobilePortStream = require("./MobilePortStream");
+const ReactNativePostMessageStream = require("./ReactNativePostMessageStream");
 
-const INPAGE = 'metamask-inpage';
-const CONTENT_SCRIPT = 'metamask-contentscript';
-const PROVIDER = 'metamask-provider';
+const INPAGE = "metamask-inpage";
+const CONTENT_SCRIPT = "metamask-contentscript";
+const PROVIDER = "metamask-provider";
 
-console.log('inpage start');
+console.log("inpage start");
 
 // Setup stream for content script communication
 const metamaskStream = new ReactNativePostMessageStream({
@@ -16,7 +16,7 @@ const metamaskStream = new ReactNativePostMessageStream({
   target: CONTENT_SCRIPT,
 });
 
-console.log('after metamaskStream');
+console.log("after metamaskStream");
 console.log(metamaskStream);
 
 // Initialize provider object (window.ethereum)
@@ -24,10 +24,10 @@ initializeProvider({
   connectionStream: metamaskStream,
   shouldSendMetadata: false,
 });
-console.log('after initializeProvider');
+console.log("after initializeProvider");
 
 // Set content script post-setup function
-Object.defineProperty(window, '_metamaskSetupProvider', {
+Object.defineProperty(window, "_metamaskSetupProvider", {
   value: () => {
     setupProviderStreams();
     delete window._metamaskSetupProvider;
@@ -44,8 +44,8 @@ Object.defineProperty(window, '_metamaskSetupProvider', {
  */
 function setupProviderStreams() {
   // eslint-disable-next-line no-alert
-  alert('mobile-provider setupProviderStreams');
-  console.log('mobile-provider setupProviderStreams');
+  alert("mobile-provider setupProviderStreams");
+  console.log("mobile-provider setupProviderStreams");
   // the transport-specific streams for communication between inpage and background
   const pageStream = new ReactNativePostMessageStream({
     name: CONTENT_SCRIPT,
@@ -64,11 +64,11 @@ function setupProviderStreams() {
   appMux.setMaxListeners(25);
 
   pump(pageMux, pageStream, pageMux, (err) =>
-    logStreamDisconnectWarning('MetaMask Inpage Multiplex', err),
+    logStreamDisconnectWarning("MetaMask Inpage Multiplex", err)
   );
   pump(appMux, appStream, appMux, (err) => {
     console.warn(err);
-    logStreamDisconnectWarning('MetaMask Background Multiplex', err);
+    logStreamDisconnectWarning("MetaMask Background Multiplex", err);
     notifyProviderOfStreamFailure();
   });
 
@@ -87,14 +87,14 @@ function setupProviderStreams() {
  * @param {ObjectMultiplex} muxB - The second mux.
  */
 function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
-  console.log('forwardTrafficBetweenMuxes');
+  console.log("forwardTrafficBetweenMuxes");
   const channelA = muxA.createStream(channelName);
   const channelB = muxB.createStream(channelName);
   pump(channelA, channelB, channelA, (err) =>
     logStreamDisconnectWarning(
       `MetaMask muxed traffic for channel "${channelName}" failed.`,
-      err,
-    ),
+      err
+    )
   );
 }
 
@@ -127,11 +127,11 @@ function notifyProviderOfStreamFailure() {
         // this object gets passed to object-multiplex
         name: PROVIDER, // the object-multiplex channel name
         data: {
-          jsonrpc: '2.0',
-          method: 'METAMASK_STREAM_FAILURE',
+          jsonrpc: "2.0",
+          method: "METAMASK_STREAM_FAILURE",
         },
       },
     },
-    window.location.origin,
+    window.location.origin
   );
 }
