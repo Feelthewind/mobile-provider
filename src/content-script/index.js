@@ -35,7 +35,7 @@ function init() {
       // script executed; remove script element from DOM
       container.removeChild(scriptTag);
     } catch (err) {
-      console.error("MetaMask script injection failed", err);
+      console.error("Dekey script injection failed", err);
     }
   }
 

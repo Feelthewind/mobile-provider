@@ -16,15 +16,12 @@ const metamaskStream = new ReactNativePostMessageStream({
   target: CONTENT_SCRIPT,
 });
 
-console.log("after metamaskStream");
-console.log(metamaskStream);
-
 // Initialize provider object (window.ethereum)
 initializeProvider({
   connectionStream: metamaskStream,
   shouldSendMetadata: false,
+  // jsonRpcStreamName: PROVIDER
 });
-console.log("after initializeProvider");
 
 // Set content script post-setup function
 Object.defineProperty(window, "_metamaskSetupProvider", {
@@ -44,7 +41,6 @@ Object.defineProperty(window, "_metamaskSetupProvider", {
  */
 function setupProviderStreams() {
   // eslint-disable-next-line no-alert
-  alert("mobile-provider setupProviderStreams");
   console.log("mobile-provider setupProviderStreams");
   // the transport-specific streams for communication between inpage and background
   const pageStream = new ReactNativePostMessageStream({
@@ -64,11 +60,11 @@ function setupProviderStreams() {
   appMux.setMaxListeners(25);
 
   pump(pageMux, pageStream, pageMux, (err) =>
-    logStreamDisconnectWarning("MetaMask Inpage Multiplex", err)
+    logStreamDisconnectWarning("Dekey Inpage Multiplex", err)
   );
   pump(appMux, appStream, appMux, (err) => {
     console.warn(err);
-    logStreamDisconnectWarning("MetaMask Background Multiplex", err);
+    logStreamDisconnectWarning("Dekey Background Multiplex", err);
     notifyProviderOfStreamFailure();
   });
 
@@ -92,7 +88,7 @@ function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
   const channelB = muxB.createStream(channelName);
   pump(channelA, channelB, channelA, (err) =>
     logStreamDisconnectWarning(
-      `MetaMask muxed traffic for channel "${channelName}" failed.`,
+      `Dekey muxed traffic for channel "${channelName}" failed.`,
       err
     )
   );
@@ -105,7 +101,7 @@ function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
  * @param {Error} err - Stream connection error
  */
 function logStreamDisconnectWarning(remoteLabel, err) {
-  let warningMsg = `MetamaskContentscript - lost connection to ${remoteLabel}`;
+  let warningMsg = `DekeyContentscript - lost connection to ${remoteLabel}`;
   if (err) {
     warningMsg += `\n${err.stack}`;
   }
