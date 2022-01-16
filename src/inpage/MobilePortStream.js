@@ -34,19 +34,10 @@ function MobilePortStream(port) {
  */
 MobilePortStream.prototype._onMessage = function (event) {
   // eslint-disable-next-line no-alert
-  console.log("MobilePortStream.prototype._onMessage");
-  console.log(event);
-
   let msg = event.data;
   try {
     msg = JSON.parse(event.data);
-  } catch (error) {
-    console.log("MobilePortStream JSON.parse error");
-  }
-  console.log(msg);
-  console.log(this._origin);
-  console.log(this._name);
-
+  } catch (error) {}
   // validate message
   // if (this._origin !== "*" && event.origin !== this._origin) {
   //   return;
@@ -65,8 +56,6 @@ MobilePortStream.prototype._onMessage = function (event) {
   //   return;
   // }
 
-  console.log("MobilePortStream _onMessage push");
-
   if (Buffer.isBuffer(msg)) {
     delete msg._isBuffer;
     const data = Buffer.from(msg);
@@ -83,7 +72,6 @@ MobilePortStream.prototype._onMessage = function (event) {
  * @private
  */
 MobilePortStream.prototype._onDisconnect = function () {
-  console.log("MobilePortStream onDisconnect");
   this.destroy();
 };
 

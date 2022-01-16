@@ -4,11 +4,11 @@ const pump = require("pump");
 const MobilePortStream = require("./MobilePortStream");
 const ReactNativePostMessageStream = require("./ReactNativePostMessageStream");
 
-const INPAGE = "metamask-inpage";
-const CONTENT_SCRIPT = "metamask-contentscript";
-const PROVIDER = "metamask-provider";
+const INPAGE = "dekey-mobile-inpage";
+const CONTENT_SCRIPT = "dekey-mobile-contentscript";
+const PROVIDER = "dekey-mobile-provider";
 
-console.log("inpage start");
+// jsonRpcStreamName = 'metamask-provider'
 
 // Setup stream for content script communication
 const metamaskStream = new ReactNativePostMessageStream({
@@ -20,7 +20,7 @@ const metamaskStream = new ReactNativePostMessageStream({
 initializeProvider({
   connectionStream: metamaskStream,
   shouldSendMetadata: false,
-  // jsonRpcStreamName: PROVIDER
+  jsonRpcStreamName: PROVIDER,
 });
 
 // Set content script post-setup function
@@ -63,7 +63,6 @@ function setupProviderStreams() {
     logStreamDisconnectWarning("Dekey Inpage Multiplex", err)
   );
   pump(appMux, appStream, appMux, (err) => {
-    console.warn(err);
     logStreamDisconnectWarning("Dekey Background Multiplex", err);
     notifyProviderOfStreamFailure();
   });
@@ -83,7 +82,6 @@ function setupProviderStreams() {
  * @param {ObjectMultiplex} muxB - The second mux.
  */
 function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
-  console.log("forwardTrafficBetweenMuxes");
   const channelA = muxA.createStream(channelName);
   const channelB = muxB.createStream(channelName);
   pump(channelA, channelB, channelA, (err) =>
@@ -101,13 +99,13 @@ function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
  * @param {Error} err - Stream connection error
  */
 function logStreamDisconnectWarning(remoteLabel, err) {
-  let warningMsg = `DekeyContentscript - lost connection to ${remoteLabel}`;
-  if (err) {
-    warningMsg += `\n${err.stack}`;
-  }
-  console.warn(warningMsg);
-  console.warn(err);
-  console.error(err);
+  // let warningMsg = `DekeyContentscript - lost connection to ${remoteLabel}`;
+  // if (err) {
+  //   warningMsg += `\n${err.stack}`;
+  // }
+  // console.warn(warningMsg);
+  // console.warn(err);
+  // console.error(err);
 }
 
 /**
